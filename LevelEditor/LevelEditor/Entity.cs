@@ -5,6 +5,8 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace LevelEditor
 {
@@ -75,8 +77,50 @@ namespace LevelEditor
             rotation = e.rotation;
             name = "new " + e.Name;
             collision.Clone(e.collision, e);
-
             Translate(rect.Width, 0);
+        }
+
+        public Entity(string json)
+        {
+            JsonTextReader jr = new JsonTextReader(new StringReader(json));
+            while (jr.Read())
+            {
+                    
+            }
+
+        }
+
+        public void Save()
+        {
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter(sb);
+            JsonTextWriter jw = new JsonTextWriter(sw);
+
+            jw.WriteStartObject();
+            jw.WritePropertyName("name");
+            jw.WriteValue(name);
+            jw.WritePropertyName("rotation");
+            jw.WriteValue(rotation);
+            jw.WritePropertyName("x");
+            jw.WriteValue(rect.X);
+            jw.WritePropertyName("y");
+            jw.WriteValue(rect.Y);
+            jw.WritePropertyName("width");
+            jw.WriteValue(rect.Width);
+            jw.WritePropertyName("height");
+            jw.WriteValue(rect.Height);
+            jw.WritePropertyName("collision");
+            jw.WriteStartObject();
+            foreach (CollisionPoint p in collision.Nodes)
+            {
+                jw.WritePropertyName("x");
+                jw.WriteValue(p.X);
+                jw.WritePropertyName("y");
+                jw.WriteValue(p.Y);
+            }
+            jw.WriteEnd();
+            jw.WritePropertyName("texture");
+            jw.WriteValue(texture.Name);
         }
 
         public void Update()
@@ -85,6 +129,11 @@ namespace LevelEditor
                 mode != EditMode.collision)
             {
                 mode = EditMode.none;
+            }
+
+            if (Input.KeyPressed(Keys.S))
+            {
+                Save();
             }
 
             OpenMenu();

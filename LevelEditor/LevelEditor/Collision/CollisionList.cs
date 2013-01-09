@@ -24,6 +24,21 @@ namespace LevelEditor
             }
         }
 
+        public List<CollisionPoint> Nodes
+        {
+            get
+            {
+                List<CollisionPoint> nodes = new List<CollisionPoint>();
+                CollisionPoint p = head;
+                while (p != null)
+                {
+                    nodes.Add(p);
+                    p = p.Next;
+                }
+                return nodes;
+            }
+        }
+
         /// <summary>
         /// deletes node overlapping with (x,y)
         /// </summary>
