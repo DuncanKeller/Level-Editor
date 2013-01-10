@@ -76,7 +76,7 @@ namespace LevelEditor
             {
                 string img = textureList.SelectedItem.ToString();
                 Texture2D texutre = textures[img];
-                callback(texutre);
+                callback(texutre, img);
             }
             Hide();
         }

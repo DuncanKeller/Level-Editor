@@ -4,19 +4,35 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using Microsoft.Xna.Framework.Input;
 namespace LevelEditor
 {
     static class Editor
     {
+        static Camera cam;
         static List<Entity> currentLayer;
         static List<List<Entity>> layers = new List<List<Entity>>();
+        static Dictionary<string, string> blueprints = new Dictionary<string, string>();
+
+        public static Dictionary<string, string> Blueprints
+        {
+            get { return blueprints; }
+        }
+
+        public static Camera Cam
+        {
+            get { return cam; }
+        }
 
         public static void Init()
         {
+            cam = new Camera();
+            cam._pos.X += Config.screenW / 2;
+            cam._pos.Y += Config.screenH / 2;
             layers.Add(new List<Entity>());
-            layers[0].Add(new Entity(TextureManager.TexMap["finger"], 100, 100));
             currentLayer = layers[0];
+
+            layers[0].Add(new Entity("finger", 100, 100));
         }
 
         public static void Update()
@@ -30,6 +46,11 @@ namespace LevelEditor
                         e.Update();
                     }
                 }
+            }
+
+            if(Input.KeyPressed(Keys.Tab))
+            {
+                MenuSystem.OpenBlueprintMenu();
             }
         }
 
@@ -55,6 +76,18 @@ namespace LevelEditor
         public static void AddEntity(Entity e)
         {
             currentLayer.Add(e);
+        }
+
+        public static void AddBlueprint(string name, string json)
+        {
+            if (!blueprints.ContainsKey(name))
+            {
+                blueprints.Add(name, json);
+            }
+            else
+            {
+                blueprints[name] = json;
+            }
         }
 
         public static void Draw(SpriteBatch sb)

@@ -25,6 +25,14 @@ namespace LevelEditor
             get { return m.Y; }
         }
 
+        public static float Scroll
+        {
+            get
+            {
+                return m.ScrollWheelValue - pm.ScrollWheelValue;
+            }
+        }
+
         public static bool LeftClick()
         {
             return m.LeftButton == ButtonState.Pressed &&

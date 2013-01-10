@@ -22,6 +22,11 @@ namespace LevelEditor
             current = new EntityMenu(e);
         }
 
+        public static void OpenBlueprintMenu()
+        {
+            current = new BlueprintMenu();
+        }
+
         public static bool IsEntityMenu(Entity e)
         {
             if (current is EntityMenu)

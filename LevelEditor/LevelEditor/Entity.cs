@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using System.IO;
+using System.Runtime.Serialization.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LevelEditor
 {
@@ -23,6 +25,7 @@ namespace LevelEditor
 
         string name = "unnamed";
         Texture2D texture;
+        string textureName;
         CollisionList collision = new CollisionList();
         Rectangle rect;
         EditMode mode = EditMode.none;
@@ -48,12 +51,6 @@ namespace LevelEditor
         public Texture2D Texture
         {
             get { return texture; }
-            set
-            {
-                texture = value;
-                rect.Width = texture.Width;
-                rect.Height = texture.Height;
-            }
         }
 
         public float Rotation
@@ -64,15 +61,17 @@ namespace LevelEditor
 
         #endregion
 
-        public Entity(Texture2D t, int x, int y)
+        public Entity(string textureName, int x, int y)
         {
-            texture = t;
-            rect = new Rectangle(x, y, t.Width, t.Height);
+            this.textureName = textureName;
+            texture = TextureManager.TexMap[textureName];
+            rect = new Rectangle(x, y, texture.Width, texture.Height);
         }
 
         public Entity(Entity e)
         {
             texture = e.texture;
+            textureName = e.textureName;
             rect = e.rect;
             rotation = e.rotation;
             name = "new " + e.Name;
@@ -80,21 +79,48 @@ namespace LevelEditor
             Translate(rect.Width, 0);
         }
 
-        public Entity(string json)
+        public Entity(string unparsedJson)
         {
-            JsonTextReader jr = new JsonTextReader(new StringReader(json));
-            while (jr.Read())
-            {
-                    
-            }
+            JObject json = JObject.Parse(unparsedJson);
 
+            string textureName = (string)json["texture"];
+            this.textureName = textureName;
+            texture = TextureManager.TexMap[textureName];
+            int x, y, w, h;
+            x = (int)json["x"];
+            y = (int)json["y"];
+            w = (int)json["width"];
+            h = (int)json["height"];
+            rect = new Rectangle(x, y, w, h);
+            rotation = (float)json["rotation"];
+            JObject collisionJson = (JObject)(json["collision"]);
+            JArray points = (JArray)collisionJson["xpoints"];
+            List<float> xpoints = new List<float>();
+            for (int i = 0; i < points.Count; i++)
+            {
+                xpoints.Add((float)points[i]);
+            }
+            points = (JArray)collisionJson["ypoints"];
+            List<float> ypoints = new List<float>();
+            for (int i = 0; i < points.Count; i++)
+            {
+                ypoints.Add((float)points[i]);
+            }
+            for (int i = 0; i < xpoints.Count; i++)
+            {
+                collision.Add(xpoints[i], ypoints[i]);
+            }
         }
 
         public void Save()
         {
-            StringBuilder sb = new StringBuilder();
-            StringWriter sw = new StringWriter(sb);
+            //FileStream fs = File.Open(Environment.GetFolderPath(
+            //    Environment.SpecialFolder.LocalApplicationData) + name + ".json", FileMode.Create);
+            FileStream fs = File.Open(name + ".json", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+
             JsonTextWriter jw = new JsonTextWriter(sw);
+            jw.Formatting = Formatting.Indented;
 
             jw.WriteStartObject();
             jw.WritePropertyName("name");
@@ -111,16 +137,34 @@ namespace LevelEditor
             jw.WriteValue(rect.Height);
             jw.WritePropertyName("collision");
             jw.WriteStartObject();
+            jw.WritePropertyName("xpoints");
+            jw.WriteStartArray();
             foreach (CollisionPoint p in collision.Nodes)
             {
-                jw.WritePropertyName("x");
                 jw.WriteValue(p.X);
-                jw.WritePropertyName("y");
+            }
+            jw.WriteEnd();
+            jw.WritePropertyName("ypoints");
+            jw.WriteStartArray();
+            foreach (CollisionPoint p in collision.Nodes)
+            {
                 jw.WriteValue(p.Y);
             }
             jw.WriteEnd();
+            jw.WriteEnd();
             jw.WritePropertyName("texture");
-            jw.WriteValue(texture.Name);
+            jw.WriteValue(textureName);
+            jw.WriteEnd();
+            jw.Close();
+
+
+            fs = File.Open(name + ".json", FileMode.Open);
+            StreamReader sr = new StreamReader(fs);
+            string json = sr.ReadToEnd();
+
+            Editor.AddBlueprint(name, json);
+
+            fs.Close();
         }
 
         public void Update()
@@ -131,17 +175,20 @@ namespace LevelEditor
                 mode = EditMode.none;
             }
 
-            if (Input.KeyPressed(Keys.S))
-            {
-                Save();
-            }
-
             OpenMenu();
             Drag();
             Rotate();
 
             Collisions();
            
+        }
+
+        public void SetTexture(Texture2D t, string n)
+        {
+            textureName = n;
+            texture = t;
+            rect.Width = texture.Width;
+            rect.Height = texture.Height;
         }
 
         public void OpenMenu()
@@ -161,6 +208,15 @@ namespace LevelEditor
             rect.X += x;
             rect.Y += y;
             collision.Translate(x, y);
+        }
+
+        public void MoveTo(int x, int y)
+        {
+            int offsetx = x - rect.X;
+            int offsety = y - rect.Y;
+            rect.X = x;
+            rect.Y = y;
+            collision.Translate(offsetx, offsety);
         }
 
         public void Collisions()

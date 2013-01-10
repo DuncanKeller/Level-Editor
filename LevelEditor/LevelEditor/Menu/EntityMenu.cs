@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace LevelEditor
 {
     public delegate void NameAction(string s);
-    public delegate void TextureAction(Texture2D t);
+    public delegate void TextureAction(Texture2D t, string n);
 
     class EntityMenu : Menu
     {
@@ -27,11 +27,7 @@ namespace LevelEditor
             AddItem("Down a Layer", null, new Vector2(0, GetMenuItemYPos(4)), Color.White, MoveDownLayer);
 
             AddItem("New Object", null, new Vector2(0, GetMenuItemYPos(5)), Color.White, CreateNewObject);
-        }
-
-        public int GetMenuItemYPos(int i)
-        {
-            return (MenuItem.defaultHeight * i) + (4 * i);
+            AddItem("Save Blueprint", null, new Vector2(0, GetMenuItemYPos(6)), Color.White, SaveBlueprint);
         }
 
         public Entity Entity
@@ -76,9 +72,14 @@ namespace LevelEditor
             Editor.AddEntity(newEnt);
         }
 
-        public void SetTexture(Texture2D t)
+        public void SaveBlueprint()
         {
-            e.Texture = t;
+            e.Save();
+        }
+
+        public void SetTexture(Texture2D t, string n)
+        {
+            e.SetTexture(t, n);
             inUse = false;
         }
 

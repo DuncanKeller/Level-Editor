@@ -38,7 +38,20 @@ namespace LevelEditor
             }
 
             items.Add(new MenuItem(text, texture, new Vector2(pos.X + 3, pos.Y + 2),
-                w , MenuItem.defaultHeight, true, c, this, a));
+                w, MenuItem.defaultHeight, true, c, this, a));
+        }
+
+        public void AddItem(string text, Texture2D texture, Vector2 pos, Color c, MenuActionS a, string bpn)
+        {
+            int w = this.w - 6;
+
+            items.Add(new MenuItemBlueprint(text, texture, new Vector2(pos.X + 3, pos.Y + 2),
+                w, MenuItem.defaultHeight, true, c, this, a, bpn));
+        }
+
+        protected int GetMenuItemYPos(int i)
+        {
+            return (MenuItem.defaultHeight * i) + (4 * i);
         }
 
         public virtual void Update(float dt)
@@ -46,6 +59,42 @@ namespace LevelEditor
             foreach (MenuItem i in items)
             {
                 i.Update(dt);
+            }
+            Scroll();
+        }
+
+        public void Scroll()
+        {
+            float scrollAmnt = Input.Scroll;
+
+            if (items.Count > 0)
+            {
+                MoveItems(scrollAmnt);
+            }
+        }
+
+
+        void MoveItems(float amount)
+        {
+            if (items.Count > 0)
+            {
+                if (amount > 0 &&
+                    amount + items[items.Count - 1].Dest.Y > y + h - 10)
+                {
+                    amount = (y + h - 10) - items[items.Count - 1].Dest.Y;
+                }
+                else if (amount < 0 &&
+                    amount + items[0].Dest.Y < y + 10)
+                {
+                    amount = (y + 10) - items[0].Dest.Y;
+                }
+            }
+
+            foreach (MenuItem i in items)
+            {
+                i.ChangePosition(new Vector2(
+                    i.Position.X,
+                    i.Position.Y + amount));
             }
         }
 

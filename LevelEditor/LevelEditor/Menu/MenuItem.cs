@@ -39,6 +39,12 @@ namespace LevelEditor
             set { pos = value; }
         }
 
+        public Vector2 Dest
+        {
+            get { return destination; }
+            set { destination = value; }
+        }
+
         public bool Selected
         {
             get { return selected; }
@@ -59,7 +65,7 @@ namespace LevelEditor
             this.c = c;
         }
 
-        public void Evoke()
+        public virtual void Evoke()
         {
             action();
         }
@@ -87,7 +93,6 @@ namespace LevelEditor
                 Evoke();
             }
         }
-
 
         public void Draw(SpriteBatch sb)
         {
