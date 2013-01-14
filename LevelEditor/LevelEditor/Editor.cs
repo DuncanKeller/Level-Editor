@@ -37,6 +37,7 @@ namespace LevelEditor
 
         public static void Update()
         {
+            List<Entity> toRemove = new List<Entity>();
             foreach (List<Entity> layer in layers)
             {
                 if (currentLayer == layer)
@@ -44,13 +45,27 @@ namespace LevelEditor
                     foreach (Entity e in layer)
                     {
                         e.Update();
+                        if (Input.Overlapping(e.Rect) &&
+                            Input.RightClick() && 
+                            e.Mode == Entity.EditMode.none)
+                        { toRemove.Add(e); MenuSystem.Close(); break; }
                     }
+
+                    foreach (Entity e in toRemove)
+                    { layer.Remove(e); }
                 }
             }
 
-            if(Input.KeyPressed(Keys.Tab))
+            if (Input.KeyPressed(Keys.Tab))
             {
-                MenuSystem.OpenBlueprintMenu();
+                if (MenuSystem.Current is BlueprintMenu)
+                {
+                    MenuSystem.Close();
+                }
+                else
+                {
+                    MenuSystem.OpenBlueprintMenu();
+                }
             }
         }
 

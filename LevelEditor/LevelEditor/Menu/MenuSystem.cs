@@ -11,6 +11,11 @@ namespace LevelEditor
         static Menu current;
         public static TextureBank textureBank;
 
+        public static Menu Current
+        {
+            get { return current; }
+        }
+
         public static void Init(GraphicsDevice g)
         {
             textureBank = new TextureBank();
@@ -37,6 +42,11 @@ namespace LevelEditor
                 }
             }
             return false;
+        }
+
+        public static void Close()
+        {
+            current = null;
         }
 
         public static void Update(float dt)

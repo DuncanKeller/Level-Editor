@@ -14,7 +14,7 @@ namespace LevelEditor
 {
     class Entity
     {
-        enum EditMode
+        public enum EditMode
         {
             none,
             drag,
@@ -35,6 +35,11 @@ namespace LevelEditor
         Point translationOffset;
 
         #region Properties
+
+        public EditMode Mode
+        {
+            get { return mode; }
+        }
 
         public string Name
         {
@@ -139,14 +144,17 @@ namespace LevelEditor
             jw.WriteStartObject();
             jw.WritePropertyName("xpoints");
             jw.WriteStartArray();
-            foreach (CollisionPoint p in collision.Nodes)
+            CollisionList copyList = new CollisionList();
+            copyList.Clone(collision, this);
+            copyList.Rotate(-rotation * 2, rect.Center.X, rect.Center.Y);
+            foreach (CollisionPoint p in copyList.Nodes)
             {
                 jw.WriteValue(p.X);
             }
             jw.WriteEnd();
             jw.WritePropertyName("ypoints");
             jw.WriteStartArray();
-            foreach (CollisionPoint p in collision.Nodes)
+            foreach (CollisionPoint p in copyList.Nodes)
             {
                 jw.WriteValue(p.Y);
             }
