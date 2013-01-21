@@ -9,6 +9,8 @@ namespace LevelEditor
 {
     static class Input
     {
+        public static bool locked = false;
+
         static MouseState m;
         static MouseState pm;
 

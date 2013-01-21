@@ -27,6 +27,12 @@ namespace LevelEditor
         Color c = Color.Black;
         Color backColor = new Color(50, 50, 150, 150);
 
+        public Color Color
+        {
+            get { return c; }
+            set { c = value; }
+        }
+
         public string Text
         {
             get { return text; }

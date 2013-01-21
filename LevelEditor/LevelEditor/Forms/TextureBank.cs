@@ -19,8 +19,14 @@ namespace LevelEditor
         }
 
         GraphicsDevice graphics;
-        Dictionary<string, Texture2D> textures ;
+        Dictionary<string, Texture2D> textures = new Dictionary<string,Texture2D>();
         TextureAction callback;
+
+        public Dictionary<string, Texture2D> Textures
+        {
+            get { return textures; }
+            set { textures = value; }
+        }
 
         private void TextureBank_Load(object sender, EventArgs e)
         {
@@ -79,6 +85,15 @@ namespace LevelEditor
                 callback(texutre, img);
             }
             Hide();
+        }
+
+        public void SaveTextures()
+        {
+            foreach (KeyValuePair<string, Texture2D> texture in textures)
+            {
+                Stream sw = File.OpenWrite("images\\" + texture.Key);
+                texture.Value.SaveAsPng(sw, texture.Value.Width, texture.Value.Height);
+            }
         }
     }
 }

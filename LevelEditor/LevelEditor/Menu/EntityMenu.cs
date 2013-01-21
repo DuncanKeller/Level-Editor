@@ -27,7 +27,8 @@ namespace LevelEditor
             AddItem("Down a Layer", null, new Vector2(0, GetMenuItemYPos(4)), Color.White, MoveDownLayer);
 
             AddItem("New Object", null, new Vector2(0, GetMenuItemYPos(5)), Color.White, CreateNewObject);
-            AddItem("Save Blueprint", null, new Vector2(0, GetMenuItemYPos(6)), Color.White, SaveBlueprint);
+            AddItem("Script", null, new Vector2(0, GetMenuItemYPos(6)), Color.White, OpenScripting);
+            AddItem("Save Blueprint", null, new Vector2(0, GetMenuItemYPos(7)), Color.White, SaveBlueprint);
         }
 
         public Entity Entity
@@ -54,6 +55,13 @@ namespace LevelEditor
                 MenuSystem.textureBank.SetCallback(SetTexture);
                 MenuSystem.textureBank.Show();
             }
+        }
+
+        public void OpenScripting()
+        {
+            Scripting scripting = new Scripting();
+            scripting.Init(e.Name);
+            scripting.Show();
         }
 
         public void MoveUpLayer()

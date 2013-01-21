@@ -49,6 +49,14 @@ namespace LevelEditor
                 w, MenuItem.defaultHeight, true, c, this, a, bpn));
         }
 
+        public void AddItem(string text, Texture2D texture, Vector2 pos, Color c, LayerAction a, int index)
+        {
+            int w = this.w - 6;
+
+            items.Add(new MenuItemLayer(text, texture, new Vector2(pos.X + 3, pos.Y + 2),
+                w, MenuItem.defaultHeight, true, c, this, a, index));
+        }
+
         protected int GetMenuItemYPos(int i)
         {
             return (MenuItem.defaultHeight * i) + (4 * i);

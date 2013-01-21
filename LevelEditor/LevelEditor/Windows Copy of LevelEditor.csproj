@@ -94,9 +94,11 @@
     <Compile Include="LineBatch.cs" />
     <Compile Include="Menu\EntityMenu.cs" />
     <Compile Include="Menu\BlueprintMenu.cs" />
+    <Compile Include="Menu\LayerMenu.cs" />
     <Compile Include="Menu\MenuItem.cs" />
     <Compile Include="Menu\Menu.cs" />
     <Compile Include="Menu\MenuItemBlueprint.cs" />
+    <Compile Include="Menu\MenuItemLayer.cs" />
     <Compile Include="Menu\MenuSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

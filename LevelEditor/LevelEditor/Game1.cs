@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.IO;
 
 namespace LevelEditor
 {
@@ -19,7 +20,6 @@ namespace LevelEditor
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         
-
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -43,7 +43,30 @@ namespace LevelEditor
             LineBatch.Init(graphics.GraphicsDevice);
             MenuSystem.Init(graphics.GraphicsDevice);
 
+            CreateFolders();
             base.Initialize();
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            MenuSystem.textureBank.SaveTextures();
+            base.OnExiting(sender, args);
+        }
+
+        public void CreateFolders()
+        {
+            if (!Directory.Exists("blueprints"))
+            {
+                Directory.CreateDirectory("blueprints");
+            }
+            if (!Directory.Exists("images"))
+            {
+                Directory.CreateDirectory("images");
+            }
+            if (!Directory.Exists("scripts"))
+            {
+                Directory.CreateDirectory("scripts");
+            }
         }
 
         /// <summary>

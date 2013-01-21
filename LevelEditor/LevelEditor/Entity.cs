@@ -90,7 +90,7 @@ namespace LevelEditor
 
             string textureName = (string)json["texture"];
             this.textureName = textureName;
-            texture = TextureManager.TexMap[textureName];
+            texture = MenuSystem.textureBank.Textures[textureName];
             int x, y, w, h;
             x = (int)json["x"];
             y = (int)json["y"];
@@ -121,7 +121,7 @@ namespace LevelEditor
         {
             //FileStream fs = File.Open(Environment.GetFolderPath(
             //    Environment.SpecialFolder.LocalApplicationData) + name + ".json", FileMode.Create);
-            FileStream fs = File.Open(name + ".json", FileMode.Create);
+            FileStream fs = File.Open("blueprints\\" + name + ".json", FileMode.Create);
             StreamWriter sw = new StreamWriter(fs);
 
             JsonTextWriter jw = new JsonTextWriter(sw);
@@ -166,7 +166,7 @@ namespace LevelEditor
             jw.Close();
 
 
-            fs = File.Open(name + ".json", FileMode.Open);
+            fs = File.Open("blueprints\\" + name + ".json", FileMode.Open);
             StreamReader sr = new StreamReader(fs);
             string json = sr.ReadToEnd();
 
@@ -180,6 +180,11 @@ namespace LevelEditor
             if (!Input.LeftHeld() &&
                 mode != EditMode.collision)
             {
+                if (mode == EditMode.drag ||
+                    mode == EditMode.rotate)
+                {
+                    Input.locked = false;
+                }
                 mode = EditMode.none;
             }
 
@@ -264,10 +269,12 @@ namespace LevelEditor
                 {
                     //startdrag
                     if (Input.LeftHeld() &&
-                        Input.KeyHeld(Keys.LeftShift))
+                        Input.KeyHeld(Keys.LeftShift) &&
+                        !Input.locked)
                     {
                         rotationOffset = -rotation - (float)Math.Atan2(Input.X - rect.Center.X, Input.Y - rect.Center.Y);
                         mode = EditMode.rotate;
+                        Input.locked = true;
                     }
                 }
             }
@@ -282,7 +289,7 @@ namespace LevelEditor
 
         public void Drag()
         {
-            if (mode == EditMode.none)
+            if (mode == EditMode.none && !Input.locked)
             {
                 if (Input.Overlapping(rect))
                 {
@@ -292,6 +299,7 @@ namespace LevelEditor
                     {
                         translationOffset = new Point(Input.X - rect.X, Input.Y - rect.Y);
                         mode = EditMode.drag;
+                        Input.locked = true;
                     }
                 }
             }

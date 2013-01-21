@@ -4,18 +4,46 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
+using System.IO;
 
 namespace LevelEditor
 {
     class BlueprintMenu : Menu
     {
+        static GraphicsDevice graphics;
         public BlueprintMenu()
             : base(0, 0, 200, Config.screenH)
         {
             UpdateMenuItems();
         }
 
-        void UpdateMenuItems()
+        public void Init(GraphicsDevice g)
+        {
+            graphics = g;
+            LoadBlueprints();
+        }
+
+        public void LoadBlueprints()
+        {
+            foreach (string f in Directory.EnumerateFiles("blueprints"))
+            {
+                string n = Path.GetFileName(f);
+                string e = Path.GetExtension(n);
+                n = n.Substring(0, n.Length - e.Length);
+                StreamReader sr = new StreamReader(f);
+                string json = sr.ReadToEnd();
+                Editor.AddBlueprint(n, json);
+                Stream tr = File.OpenRead("images\\" + n + ".png");
+                Texture2D texture = Texture2D.FromStream(graphics, tr);
+                MenuSystem.textureBank.Textures.Add(n + ".png", texture);
+                sr.Close();
+                tr.Close();
+            }
+        }
+
+        public void UpdateMenuItems()
         {
             items.Clear();
             int count = 0;

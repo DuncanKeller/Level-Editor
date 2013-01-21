@@ -10,13 +10,25 @@ namespace LevelEditor
     static class Editor
     {
         static Camera cam;
-        static List<Entity> currentLayer;
+        static int currentLayer;
         static List<List<Entity>> layers = new List<List<Entity>>();
         static Dictionary<string, string> blueprints = new Dictionary<string, string>();
-
+        
         public static Dictionary<string, string> Blueprints
         {
             get { return blueprints; }
+        }
+
+        public static List<List<Entity>> Layers
+        {
+            get { return layers; }
+            set { layers = value; }
+        }
+
+        public static int CurrentLayer
+        {
+            get { return currentLayer; }
+            set { currentLayer = value; }
         }
 
         public static Camera Cam
@@ -30,7 +42,7 @@ namespace LevelEditor
             cam._pos.X += Config.screenW / 2;
             cam._pos.Y += Config.screenH / 2;
             layers.Add(new List<Entity>());
-            currentLayer = layers[0];
+            currentLayer = 0;
 
             layers[0].Add(new Entity("finger", 100, 100));
         }
@@ -40,8 +52,9 @@ namespace LevelEditor
             List<Entity> toRemove = new List<Entity>();
             foreach (List<Entity> layer in layers)
             {
-                if (currentLayer == layer)
+                if (layers[currentLayer] == layer)
                 {
+                    layer.Reverse();
                     foreach (Entity e in layer)
                     {
                         e.Update();
@@ -50,6 +63,7 @@ namespace LevelEditor
                             e.Mode == Entity.EditMode.none)
                         { toRemove.Add(e); MenuSystem.Close(); break; }
                     }
+                    layer.Reverse();
 
                     foreach (Entity e in toRemove)
                     { layer.Remove(e); }
@@ -58,13 +72,24 @@ namespace LevelEditor
 
             if (Input.KeyPressed(Keys.Tab))
             {
-                if (MenuSystem.Current is BlueprintMenu)
+                if (MenuSystem.Current != null)
                 {
                     MenuSystem.Close();
                 }
                 else
                 {
                     MenuSystem.OpenBlueprintMenu();
+                }
+            }
+            else if (Input.KeyPressed(Keys.L))
+            {
+                if (MenuSystem.Current is LayerMenu)
+                {
+                    MenuSystem.Close();
+                }
+                else
+                {
+                    MenuSystem.OpenLayerMenu();
                 }
             }
         }
@@ -90,7 +115,7 @@ namespace LevelEditor
 
         public static void AddEntity(Entity e)
         {
-            currentLayer.Add(e);
+            layers[currentLayer].Add(e);
         }
 
         public static void AddBlueprint(string name, string json)

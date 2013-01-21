@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace LevelEditor
 {
@@ -10,6 +11,8 @@ namespace LevelEditor
     {
         static Menu current;
         public static TextureBank textureBank;
+        static bool doonce = true;
+        static BlueprintMenu blueprints;
 
         public static Menu Current
         {
@@ -20,6 +23,8 @@ namespace LevelEditor
         {
             textureBank = new TextureBank();
             textureBank.Init(g);
+            blueprints = new BlueprintMenu();
+            blueprints.Init(g);
         }
 
         public static void OpenEntityMenu(Entity e)
@@ -29,7 +34,13 @@ namespace LevelEditor
 
         public static void OpenBlueprintMenu()
         {
-            current = new BlueprintMenu();
+            current = blueprints;
+            blueprints.UpdateMenuItems();
+        }
+
+        public static void OpenLayerMenu()
+        {
+            current = new LayerMenu();
         }
 
         public static bool IsEntityMenu(Entity e)
