@@ -33,6 +33,7 @@ namespace LevelEditor
         float rotationOffset;
         float rotation;
         Point translationOffset;
+        bool dynamic = false;
 
         #region Properties
 
@@ -96,25 +97,26 @@ namespace LevelEditor
             y = (int)json["y"];
             w = (int)json["width"];
             h = (int)json["height"];
-            rect = new Rectangle(x, y, w, h);
+            rect = new Rectangle(x - (w / 2), y - (h / 2), w, h);
             rotation = (float)json["rotation"];
             JObject collisionJson = (JObject)(json["collision"]);
             JArray points = (JArray)collisionJson["xpoints"];
             List<float> xpoints = new List<float>();
             for (int i = 0; i < points.Count; i++)
             {
-                xpoints.Add((float)points[i]);
+                xpoints.Add((float)points[i] + x);
             }
             points = (JArray)collisionJson["ypoints"];
             List<float> ypoints = new List<float>();
             for (int i = 0; i < points.Count; i++)
             {
-                ypoints.Add((float)points[i]);
+                ypoints.Add((float)points[i] + y);
             }
             for (int i = 0; i < xpoints.Count; i++)
             {
                 collision.Add(xpoints[i], ypoints[i]);
             }
+            dynamic = (bool)json["dynamic"];
         }
 
         public void Save()
@@ -133,9 +135,10 @@ namespace LevelEditor
             jw.WritePropertyName("rotation");
             jw.WriteValue(rotation);
             jw.WritePropertyName("x");
-            jw.WriteValue(rect.X);
+            Vector2 center = collision.GetCenter();
+            jw.WriteValue(center.X);
             jw.WritePropertyName("y");
-            jw.WriteValue(rect.Y);
+            jw.WriteValue(center.Y);
             jw.WritePropertyName("width");
             jw.WriteValue(rect.Width);
             jw.WritePropertyName("height");
@@ -149,19 +152,21 @@ namespace LevelEditor
             copyList.Rotate(-rotation * 2, rect.Center.X, rect.Center.Y);
             foreach (CollisionPoint p in copyList.Nodes)
             {
-                jw.WriteValue(p.X);
+                jw.WriteValue(p.X - center.X);
             }
             jw.WriteEnd();
             jw.WritePropertyName("ypoints");
             jw.WriteStartArray();
             foreach (CollisionPoint p in copyList.Nodes)
             {
-                jw.WriteValue(p.Y);
+                jw.WriteValue(p.Y - center.Y);
             }
             jw.WriteEnd();
             jw.WriteEnd();
             jw.WritePropertyName("texture");
             jw.WriteValue(textureName);
+            jw.WritePropertyName("dynamic");
+            jw.WriteValue(dynamic);
             jw.WriteEnd();
             jw.Close();
 

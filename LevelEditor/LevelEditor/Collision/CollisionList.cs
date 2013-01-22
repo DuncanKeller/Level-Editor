@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -71,6 +72,25 @@ namespace LevelEditor
             }
 
             return false;
+        }
+
+        public Vector2 GetCenter()
+        {
+            if (head != null)
+            {
+                CollisionPoint n = head;
+                Vector2 c = new Vector2(head.X, head.Y);
+                do
+                {
+                    c.X += (n.X - c.X) / 2;
+                    c.Y += (n.Y - c.Y) / 2;
+                    n = n.Next;
+
+                } while (n.Next != null);
+
+                return c;
+            }
+            return Vector2.Zero;
         }
 
         public void RemoveHead()

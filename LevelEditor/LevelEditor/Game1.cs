@@ -39,11 +39,12 @@ namespace LevelEditor
             graphics.PreferredBackBufferHeight = 600;
             graphics.ApplyChanges();
 
+            CreateFolders();
             TextureManager.Init(Content);
             LineBatch.Init(graphics.GraphicsDevice);
             MenuSystem.Init(graphics.GraphicsDevice);
 
-            CreateFolders();
+            
             base.Initialize();
         }
 
