@@ -146,19 +146,19 @@ namespace LevelEditor
             return true;
         }
 
-        public void Draw(SpriteBatch sb)
+        public void Draw(SpriteBatch sb, Color c)
         {
-            LineBatch.DrawCircle(sb, new Vector2(x, y), s, color);
+            LineBatch.DrawCircle(sb, new Vector2(x, y), s, c);
             if (n != null)
             {
-                n.Draw(sb);
+                n.Draw(sb, c);
 
-                LineBatch.DrawLine(sb, color,
+                LineBatch.DrawLine(sb, c,
                     new Vector2(x, y), new Vector2(n.x, n.y));
             }
             else
             {
-                LineBatch.DrawLine(sb, color,
+                LineBatch.DrawLine(sb, c,
                     new Vector2(x, y), new Vector2(head.x, head.y));
             }
         }

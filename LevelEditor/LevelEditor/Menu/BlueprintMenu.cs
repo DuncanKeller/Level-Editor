@@ -35,10 +35,16 @@ namespace LevelEditor
                 StreamReader sr = new StreamReader(f);
                 string json = sr.ReadToEnd();
                 Editor.AddBlueprint(n, json);
+                sr.Close();
+            }
+            foreach (string f in Directory.EnumerateFiles("images"))
+            {
+                string n = Path.GetFileName(f);
+                string e = Path.GetExtension(n);
+                n = n.Substring(0, n.Length - e.Length);
                 Stream tr = File.OpenRead("images\\" + n + ".png");
                 Texture2D texture = Texture2D.FromStream(graphics, tr);
-                MenuSystem.textureBank.Textures.Add(n + ".png", texture);
-                sr.Close();
+                MenuSystem.textureBank.AddTexture(texture, n + ".png");
                 tr.Close();
             }
         }

@@ -82,7 +82,7 @@ namespace LevelEditor
 
         public void SaveBlueprint()
         {
-            e.Save();
+            e.SaveBlueprint();
         }
 
         public void SetTexture(Texture2D t, string n)

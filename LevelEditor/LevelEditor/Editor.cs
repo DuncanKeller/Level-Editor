@@ -5,6 +5,9 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
+using System.IO;
+
 namespace LevelEditor
 {
     static class Editor
@@ -92,6 +95,10 @@ namespace LevelEditor
                     MenuSystem.OpenLayerMenu();
                 }
             }
+            else if (Input.KeyPressed(Keys.S))
+            {
+                Save();
+            }
         }
 
         public static void ChangeLayer(Entity e, int index)
@@ -128,6 +135,30 @@ namespace LevelEditor
             {
                 blueprints[name] = json;
             }
+        }
+
+        public static void Save()
+        {
+            string levelName = "testlevel";
+            FileStream fs = File.Open(levelName + ".json", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+            JsonTextWriter jw = new JsonTextWriter(sw);
+            jw.Formatting = Formatting.Indented;
+
+            jw.WriteStartObject();
+            jw.WritePropertyName("entities");
+            jw.WriteStartArray();
+            foreach (List<Entity> layer in layers)
+            {
+                foreach (Entity e in layer)
+                {
+                    e.SaveEntity(ref jw);
+                    //jw.WriteValue(e.SaveEntity());
+                }
+            }
+            jw.WriteEnd();
+            jw.WriteEnd();
+            jw.Close();
         }
 
         public static void Draw(SpriteBatch sb)

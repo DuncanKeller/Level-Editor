@@ -15,6 +15,7 @@ namespace LevelEditor
     {
         public TextureBank()
         {
+            textures = new Dictionary<string, Texture2D>();
             InitializeComponent();
         }
 
@@ -30,7 +31,7 @@ namespace LevelEditor
 
         private void TextureBank_Load(object sender, EventArgs e)
         {
-            textures = new Dictionary<string, Texture2D>();
+           
         }
 
         public void Init(GraphicsDevice g)
@@ -53,6 +54,12 @@ namespace LevelEditor
             Bitmap image = new Bitmap(mem);
 
             pictureBox1.Image = image;
+        }
+
+        public void AddTexture(Texture2D texture, string name)
+        {
+            textures.Add(name, texture);
+            textureList.Items.Add(name);
         }
 
         private void loadButton_Click(object sender, EventArgs e)
@@ -94,6 +101,11 @@ namespace LevelEditor
                 Stream sw = File.OpenWrite("images\\" + texture.Key);
                 texture.Value.SaveAsPng(sw, texture.Value.Width, texture.Value.Height);
             }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

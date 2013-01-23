@@ -26,7 +26,8 @@ namespace LevelEditor
         string name = "unnamed";
         Texture2D texture;
         string textureName;
-        CollisionList collision = new CollisionList();
+        List<CollisionList> cVolumes = new List<CollisionList>();
+        int currVolume = 0;
         Rectangle rect;
         EditMode mode = EditMode.none;
 
@@ -72,6 +73,7 @@ namespace LevelEditor
             this.textureName = textureName;
             texture = TextureManager.TexMap[textureName];
             rect = new Rectangle(x, y, texture.Width, texture.Height);
+            cVolumes.Add(new CollisionList());
         }
 
         public Entity(Entity e)
@@ -81,14 +83,19 @@ namespace LevelEditor
             rect = e.rect;
             rotation = e.rotation;
             name = "new " + e.Name;
-            collision.Clone(e.collision, e);
+            foreach (CollisionList c in e.cVolumes)
+            {
+                CollisionList col = new CollisionList();
+                col.Clone(c, e);
+                cVolumes.Add(col);
+            }
             Translate(rect.Width, 0);
         }
 
         public Entity(string unparsedJson)
         {
             JObject json = JObject.Parse(unparsedJson);
-
+            name = (string)json["name"];
             string textureName = (string)json["texture"];
             this.textureName = textureName;
             texture = MenuSystem.textureBank.Textures[textureName];
@@ -99,27 +106,34 @@ namespace LevelEditor
             h = (int)json["height"];
             rect = new Rectangle(x - (w / 2), y - (h / 2), w, h);
             rotation = (float)json["rotation"];
-            JObject collisionJson = (JObject)(json["collision"]);
-            JArray points = (JArray)collisionJson["xpoints"];
-            List<float> xpoints = new List<float>();
-            for (int i = 0; i < points.Count; i++)
+            JArray volumes = (JArray)json["collisionVolumes"];
+            for (int index = 0; index < volumes.Count; index++)
             {
-                xpoints.Add((float)points[i] + x);
-            }
-            points = (JArray)collisionJson["ypoints"];
-            List<float> ypoints = new List<float>();
-            for (int i = 0; i < points.Count; i++)
-            {
-                ypoints.Add((float)points[i] + y);
-            }
-            for (int i = 0; i < xpoints.Count; i++)
-            {
-                collision.Add(xpoints[i], ypoints[i]);
+                CollisionList cl = new CollisionList();
+                JObject collisionJson = (JObject)(json["collision"]);
+                JArray points = (JArray)collisionJson["xpoints"];
+                List<float> xpoints = new List<float>();
+                for (int i = 0; i < points.Count; i++)
+                {
+                    xpoints.Add((float)points[i] + x);
+                }
+                points = (JArray)collisionJson["ypoints"];
+                List<float> ypoints = new List<float>();
+                for (int i = 0; i < points.Count; i++)
+                {
+                    ypoints.Add((float)points[i] + y);
+                }
+                for (int i = 0; i < xpoints.Count; i++)
+                {
+                    cl.Add(xpoints[i], ypoints[i]);
+                }
+                cl.Physical = (bool)collisionJson["physical"];
+                cVolumes.Add(cl);
             }
             dynamic = (bool)json["dynamic"];
         }
 
-        public void Save()
+        public void SaveBlueprint()
         {
             //FileStream fs = File.Open(Environment.GetFolderPath(
             //    Environment.SpecialFolder.LocalApplicationData) + name + ".json", FileMode.Create);
@@ -135,7 +149,15 @@ namespace LevelEditor
             jw.WritePropertyName("rotation");
             jw.WriteValue(rotation);
             jw.WritePropertyName("x");
-            Vector2 center = collision.GetCenter();
+            Vector2 center;
+            if (cVolumes[0] != null)
+            {
+                center = cVolumes[0].GetCenter();
+            }
+            else
+            {
+                center = new Vector2(rect.Center.X, rect.Center.Y);
+            }
             jw.WriteValue(center.X);
             jw.WritePropertyName("y");
             jw.WriteValue(center.Y);
@@ -143,24 +165,32 @@ namespace LevelEditor
             jw.WriteValue(rect.Width);
             jw.WritePropertyName("height");
             jw.WriteValue(rect.Height);
-            jw.WritePropertyName("collision");
-            jw.WriteStartObject();
-            jw.WritePropertyName("xpoints");
+            jw.WritePropertyName("collisionVolumes");
             jw.WriteStartArray();
-            CollisionList copyList = new CollisionList();
-            copyList.Clone(collision, this);
-            copyList.Rotate(-rotation * 2, rect.Center.X, rect.Center.Y);
-            foreach (CollisionPoint p in copyList.Nodes)
+            foreach (CollisionList cl in cVolumes)
             {
-                jw.WriteValue(p.X - center.X);
+                jw.WritePropertyName("collision");
+                jw.WriteStartObject();
+                jw.WritePropertyName("physical");
+                jw.WriteValue(cl.Physical);
+                jw.WritePropertyName("xpoints");
+                jw.WriteStartArray();
+                CollisionList copyList = new CollisionList();
+                copyList.Clone(cl, this);
+                copyList.Rotate(-rotation * 2, rect.Center.X, rect.Center.Y);
+                foreach (CollisionPoint p in copyList.Nodes)
+                {
+                    jw.WriteValue(p.X - center.X);
+                }
+                jw.WriteEnd();
+                jw.WritePropertyName("ypoints");
+                jw.WriteStartArray();
+                foreach (CollisionPoint p in copyList.Nodes)
+                {
+                    jw.WriteValue(p.Y - center.Y);
+                }
             }
             jw.WriteEnd();
-            jw.WritePropertyName("ypoints");
-            jw.WriteStartArray();
-            foreach (CollisionPoint p in copyList.Nodes)
-            {
-                jw.WriteValue(p.Y - center.Y);
-            }
             jw.WriteEnd();
             jw.WriteEnd();
             jw.WritePropertyName("texture");
@@ -170,7 +200,6 @@ namespace LevelEditor
             jw.WriteEnd();
             jw.Close();
 
-
             fs = File.Open("blueprints\\" + name + ".json", FileMode.Open);
             StreamReader sr = new StreamReader(fs);
             string json = sr.ReadToEnd();
@@ -178,6 +207,31 @@ namespace LevelEditor
             Editor.AddBlueprint(name, json);
 
             fs.Close();
+        }
+
+        public void SaveEntity(ref JsonTextWriter jw)
+        {
+            jw.WriteStartObject();
+
+            jw.WritePropertyName("name");
+            jw.WriteValue(name);
+            jw.WritePropertyName("rotation");
+            jw.WriteValue(rotation);
+            jw.WritePropertyName("x");
+            Vector2 center;
+            if (cVolumes[0] != null)
+            {
+                center = cVolumes[0].GetCenter();
+            }
+            else
+            {
+                center = new Vector2(rect.Center.X, rect.Center.Y);
+            }
+            jw.WriteValue(center.X);
+            jw.WritePropertyName("y");
+            jw.WriteValue(center.Y);
+
+            jw.WriteEnd();
         }
 
         public void Update()
@@ -198,7 +252,6 @@ namespace LevelEditor
             Rotate();
 
             Collisions();
-           
         }
 
         public void SetTexture(Texture2D t, string n)
@@ -225,7 +278,10 @@ namespace LevelEditor
         {
             rect.X += x;
             rect.Y += y;
-            collision.Translate(x, y);
+            foreach (CollisionList cl in cVolumes)
+            {
+                cl.Translate(x, y);
+            }
         }
 
         public void MoveTo(int x, int y)
@@ -234,7 +290,10 @@ namespace LevelEditor
             int offsety = y - rect.Y;
             rect.X = x;
             rect.Y = y;
-            collision.Translate(offsetx, offsety);
+            foreach (CollisionList cl in cVolumes)
+            {
+                cl.Translate(offsetx, offsety);
+            }
         }
 
         public void Collisions()
@@ -252,15 +311,15 @@ namespace LevelEditor
 
                 if (Input.LeftClick())
                 {
-                    collision.Add(Input.X, Input.Y);
+                    cVolumes[currVolume].Add(Input.X, Input.Y);
                 }
                 else if (Input.RightClick())
                 {
-                    collision.Delete(Input.X, Input.Y);
+                    cVolumes[currVolume].Delete(Input.X, Input.Y);
                 }
                 else if (Input.KeyPressed(Keys.Back))
                 {
-                    collision.RemoveHead();
+                    cVolumes[currVolume].RemoveHead();
                 }
             }
         }
@@ -286,8 +345,10 @@ namespace LevelEditor
             else if (mode == EditMode.rotate)
             {
                 float r = -(float)Math.Atan2(Input.X - rect.Center.X, Input.Y - rect.Center.Y) - rotationOffset;
-
-                collision.Rotate(r - rotation, rect.Center.X, rect.Center.Y);
+                foreach (CollisionList cl in cVolumes)
+                {
+                    cl.Rotate(r - rotation, rect.Center.X, rect.Center.Y);
+                }
                 rotation = r;
             }
         }
@@ -312,8 +373,10 @@ namespace LevelEditor
             {
                 int x = Input.X - translationOffset.X;
                 int y = Input.Y - translationOffset.Y;
-
-                collision.Translate(x - rect.X, y - rect.Y);
+                foreach (CollisionList cl in cVolumes)
+                {
+                    cl.Translate(x - rect.X, y - rect.Y);
+                }
                 rect.X = x;
                 rect.Y = y;
             }
@@ -334,7 +397,36 @@ namespace LevelEditor
                 SpriteEffects.None, 0);
             if (mode == EditMode.collision)
             {
-                collision.Draw(sb);
+                for (int i = 0; i < cVolumes.Count; i++)
+                {
+                    if (i == currVolume)
+                    {
+                        Color color = Color.White;
+                        switch (i)
+                        {
+                            case 0:
+                                color = Color.Red;
+                                break;
+                            case 1:
+                                color = Color.Yellow;
+                                break;
+                            case 2:
+                                color = Color.Blue;
+                                break;
+                            case 3:
+                                color = Color.Green;
+                                break;
+                            case 4:
+                                color = Color.Purple;
+                                break;
+                        }
+                        cVolumes[i].Draw(sb, color);
+                    }
+                    else
+                    {
+                        cVolumes[i].Draw(sb, Color.Gray);
+                    }
+                }
             }
         }
     }

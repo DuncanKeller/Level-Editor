@@ -11,6 +11,13 @@ namespace LevelEditor
     class CollisionList
     {
         CollisionPoint head;
+        bool physical = true;
+
+        public bool Physical
+        {
+            get { return physical; }
+            set { physical = value; }
+        }
 
         public void Add(float x, float y)
         {
@@ -39,6 +46,8 @@ namespace LevelEditor
                 return nodes;
             }
         }
+
+        
 
         /// <summary>
         /// deletes node overlapping with (x,y)
@@ -140,11 +149,11 @@ namespace LevelEditor
             Rotate(e.Rotation, e.Rect.Center.X, e.Rect.Center.Y);
         }
 
-        public void Draw(SpriteBatch sb)
+        public void Draw(SpriteBatch sb, Color c)
         {
             if (head != null)
             {
-                head.Draw(sb);
+                head.Draw(sb, c);
             }
         }
     }
