@@ -30,6 +30,7 @@ namespace LevelEditor
         int currVolume = 0;
         Rectangle rect;
         EditMode mode = EditMode.none;
+        List<string> tags = new List<string>();
 
         float rotationOffset;
         float rotation;
@@ -37,6 +38,17 @@ namespace LevelEditor
         bool dynamic = false;
 
         #region Properties
+
+        public List<string> Tags
+        {
+            get { return tags; }
+            set { tags = value; }
+        }
+
+        public int CurrentVolume
+        {
+            get { return currVolume; }
+        }
 
         public EditMode Mode
         {
@@ -98,10 +110,10 @@ namespace LevelEditor
             name = (string)json["name"];
             string textureName = (string)json["texture"];
             this.textureName = textureName;
-            texture = MenuSystem.textureBank.Textures[textureName];
+             texture = MenuSystem.textureBank.Textures[textureName];
             int x, y, w, h;
-            x = (int)json["x"];
-            y = (int)json["y"];
+            x = (int)((float)json["x"]);
+            y = (int)((float)json["y"]);
             w = (int)json["width"];
             h = (int)json["height"];
             rect = new Rectangle(x - (w / 2), y - (h / 2), w, h);
@@ -110,7 +122,7 @@ namespace LevelEditor
             for (int index = 0; index < volumes.Count; index++)
             {
                 CollisionList cl = new CollisionList();
-                JObject collisionJson = (JObject)(json["collision"]);
+                JObject collisionJson = (JObject)(volumes[index]);
                 JArray points = (JArray)collisionJson["xpoints"];
                 List<float> xpoints = new List<float>();
                 for (int i = 0; i < points.Count; i++)
@@ -131,6 +143,12 @@ namespace LevelEditor
                 cVolumes.Add(cl);
             }
             dynamic = (bool)json["dynamic"];
+            JArray tags = (JArray)json["tags"];
+            for (int index = 0; index < tags.Count; index++)
+            {
+                this.tags.Add((string)tags[index]);
+            }
+
         }
 
         public void SaveBlueprint()
@@ -169,7 +187,6 @@ namespace LevelEditor
             jw.WriteStartArray();
             foreach (CollisionList cl in cVolumes)
             {
-                jw.WritePropertyName("collision");
                 jw.WriteStartObject();
                 jw.WritePropertyName("physical");
                 jw.WriteValue(cl.Physical);
@@ -197,6 +214,14 @@ namespace LevelEditor
             jw.WriteValue(textureName);
             jw.WritePropertyName("dynamic");
             jw.WriteValue(dynamic);
+            jw.WritePropertyName("tags");
+            jw.WriteStartArray();
+            foreach (string s in tags)
+            {
+                jw.WriteValue(s);
+            }
+            jw.WriteEnd();
+
             jw.WriteEnd();
             jw.Close();
 
@@ -230,6 +255,13 @@ namespace LevelEditor
             jw.WriteValue(center.X);
             jw.WritePropertyName("y");
             jw.WriteValue(center.Y);
+            jw.WritePropertyName("tags");
+            jw.WriteStartArray();
+            foreach (string s in tags)
+            {
+                jw.WriteValue(s);
+            }
+            jw.WriteEnd();
 
             jw.WriteEnd();
         }
@@ -247,11 +279,50 @@ namespace LevelEditor
                 mode = EditMode.none;
             }
 
-            OpenMenu();
-            Drag();
-            Rotate();
+            if (MenuSystem.Current == null ||
+                !Input.Overlapping(MenuSystem.Current.Rect))
+            {
+                OpenMenu();
+                Drag();
+                Rotate();
 
-            Collisions();
+                Collisions();
+            }
+        }
+
+        public void AddTag(string t)
+        {
+            tags.Add(t);
+        }
+
+        public void SwapCollisionPhys()
+        {
+            cVolumes[currVolume].Physical = !cVolumes[currVolume].Physical;
+        }
+
+        public bool GetCollisionPhys()
+        {
+            return cVolumes[currVolume].Physical;
+        }
+
+        public void AddCollisionVolume()
+        {
+            if (cVolumes.Count < 5)
+            {
+                cVolumes.Add(new CollisionList());
+            }
+
+            currVolume = cVolumes.Count - 1;
+        }
+
+        public void ChangeVolumeLayer()
+        {
+            currVolume++;
+
+            if (currVolume > cVolumes.Count - 1)
+            {
+                currVolume = 0;
+            }
         }
 
         public void SetTexture(Texture2D t, string n)

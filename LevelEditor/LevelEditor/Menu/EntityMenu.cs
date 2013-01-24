@@ -29,6 +29,12 @@ namespace LevelEditor
             AddItem("New Object", null, new Vector2(0, GetMenuItemYPos(5)), Color.White, CreateNewObject);
             AddItem("Script", null, new Vector2(0, GetMenuItemYPos(6)), Color.White, OpenScripting);
             AddItem("Save Blueprint", null, new Vector2(0, GetMenuItemYPos(7)), Color.White, SaveBlueprint);
+
+            AddItem("Add Volume", null, new Vector2(0, GetMenuItemYPos(9)), Color.White, AddCollision);
+            AddItem("Volume Phys=on", null, new Vector2(0, GetMenuItemYPos(10)), Color.White, SetCollisionPhys);
+            AddItem("Volume layer=0", null, new Vector2(0, GetMenuItemYPos(11)), Color.White, ChangeVolumeLayer);
+
+            AddItem("add tag", null, new Vector2(0, GetMenuItemYPos(13)), Color.White, AddTag);
         }
 
         public Entity Entity
@@ -55,6 +61,49 @@ namespace LevelEditor
                 MenuSystem.textureBank.SetCallback(SetTexture);
                 MenuSystem.textureBank.Show();
             }
+        }
+
+        public void AddTag()
+        {
+            if (!inUse)
+            {
+                inUse = true;
+                TagForm tagForm = new TagForm();
+                tagForm.Init(SetTags, e.Tags);
+                tagForm.Show();
+            }
+        }
+
+        public void AddCollision()
+        {
+            e.AddCollisionVolume();
+            RefreshText();
+        }
+
+        public void SetCollisionPhys()
+        {
+            e.SwapCollisionPhys();
+            RefreshText();
+        }
+
+        private void RefreshText()
+        {
+            items[8].Text = "Volume Phys=";
+            if (e.GetCollisionPhys())
+            {
+                items[8].Text += "on";
+            }
+            else
+            {
+                items[8].Text += "off";
+            }
+            items[9].Text = "Volume layer=" + e.CurrentVolume;
+        }
+
+        public void ChangeVolumeLayer()
+        {
+            e.ChangeVolumeLayer();
+            RefreshText();
         }
 
         public void OpenScripting()
@@ -94,6 +143,14 @@ namespace LevelEditor
         public void SetName(string n)
         {
             e.Name = n;
+            inUse = false;
+        }
+
+        public void SetTags(string n)
+        {
+            string[] tags = n.Split(';');
+            List<string> tagList = tags.ToList<string>();
+            e.Tags = tagList;
             inUse = false;
         }
 

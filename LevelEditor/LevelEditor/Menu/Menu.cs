@@ -21,6 +21,11 @@ namespace LevelEditor
             get { return new Vector2(x, y); }
         }
 
+        public Rectangle Rect
+        {
+            get { return new Rectangle(x, y, w, h); }
+        }
+
         public Menu(float x, float y, float w, float h)
         {
             this.x = (int)x;
@@ -87,14 +92,14 @@ namespace LevelEditor
             if (items.Count > 0)
             {
                 if (amount > 0 &&
-                    amount + items[items.Count - 1].Dest.Y > y + h - 10)
+                    amount + items[0].Dest.Y > y + h - 10)
                 {
-                    amount = (y + h - 10) - items[items.Count - 1].Dest.Y;
+                    //amount = (y + 10) - items[0].Dest.Y;
                 }
                 else if (amount < 0 &&
-                    amount + items[0].Dest.Y < y + 10)
+                    amount + items[items.Count - 1].Dest.Y < y + 10)
                 {
-                    amount = (y + 10) - items[0].Dest.Y;
+                   // amount = (y + h - 10) - items[items.Count - 1].Dest.Y;
                 }
             }
 

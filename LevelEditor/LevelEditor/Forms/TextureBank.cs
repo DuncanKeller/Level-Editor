@@ -91,6 +91,7 @@ namespace LevelEditor
                 Texture2D texutre = textures[img];
                 callback(texutre, img);
             }
+            SaveTextures();
             Hide();
         }
 
@@ -100,6 +101,7 @@ namespace LevelEditor
             {
                 Stream sw = File.OpenWrite("images\\" + texture.Key);
                 texture.Value.SaveAsPng(sw, texture.Value.Width, texture.Value.Height);
+                sw.Close();
             }
         }
 
@@ -107,5 +109,7 @@ namespace LevelEditor
         {
 
         }
+
+        
     }
 }
