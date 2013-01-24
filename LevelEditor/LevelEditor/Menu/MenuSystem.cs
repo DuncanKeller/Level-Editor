@@ -13,6 +13,7 @@ namespace LevelEditor
         public static TextureBank textureBank;
         static bool doonce = true;
         static BlueprintMenu blueprints;
+        public static GraphicsDevice graphics;
 
         public static Menu Current
         {
@@ -21,6 +22,7 @@ namespace LevelEditor
 
         public static void Init(GraphicsDevice g)
         {
+            graphics = g;
             textureBank = new TextureBank();
             textureBank.Init(g);
             blueprints = new BlueprintMenu();

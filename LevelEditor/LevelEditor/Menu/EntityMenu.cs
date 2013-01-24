@@ -27,14 +27,15 @@ namespace LevelEditor
             AddItem("Down a Layer", null, new Vector2(0, GetMenuItemYPos(4)), Color.White, MoveDownLayer);
 
             AddItem("New Object", null, new Vector2(0, GetMenuItemYPos(5)), Color.White, CreateNewObject);
-            AddItem("Script", null, new Vector2(0, GetMenuItemYPos(6)), Color.White, OpenScripting);
-            AddItem("Save Blueprint", null, new Vector2(0, GetMenuItemYPos(7)), Color.White, SaveBlueprint);
+            AddItem("Scripting", null, new Vector2(0, GetMenuItemYPos(6)), Color.White, OpenScripting);
+            AddItem("Animation", null, new Vector2(0, GetMenuItemYPos(7)), Color.White, OpenAnim);
+            AddItem("Save Blueprint", null, new Vector2(0, GetMenuItemYPos(8)), Color.White, SaveBlueprint);
 
-            AddItem("Add Volume", null, new Vector2(0, GetMenuItemYPos(9)), Color.White, AddCollision);
-            AddItem("Volume Phys=on", null, new Vector2(0, GetMenuItemYPos(10)), Color.White, SetCollisionPhys);
-            AddItem("Volume layer=0", null, new Vector2(0, GetMenuItemYPos(11)), Color.White, ChangeVolumeLayer);
+            AddItem("Add Volume", null, new Vector2(0, GetMenuItemYPos(10)), Color.White, AddCollision);
+            AddItem("Volume Phys=on", null, new Vector2(0, GetMenuItemYPos(11)), Color.White, SetCollisionPhys);
+            AddItem("Volume layer=0", null, new Vector2(0, GetMenuItemYPos(12)), Color.White, ChangeVolumeLayer);
 
-            AddItem("add tag", null, new Vector2(0, GetMenuItemYPos(13)), Color.White, AddTag);
+            AddItem("add tag", null, new Vector2(0, GetMenuItemYPos(14)), Color.White, AddTag);
         }
 
         public Entity Entity
@@ -60,6 +61,17 @@ namespace LevelEditor
                 inUse = true;
                 MenuSystem.textureBank.SetCallback(SetTexture);
                 MenuSystem.textureBank.Show();
+            }
+        }
+
+        public void OpenAnim()
+        {
+            if (!inUse)
+            {
+                inUse = true;
+                AnimationForm anim = new AnimationForm();
+                anim.Init(MenuSystem.graphics);
+                anim.Show();
             }
         }
 
