@@ -100,16 +100,16 @@ namespace LevelEditor
 
         private void RefreshText()
         {
-            items[8].Text = "Volume Phys=";
+            items[9].Text = "Volume Phys=";
             if (e.GetCollisionPhys())
             {
-                items[8].Text += "on";
+                items[9].Text += "on";
             }
             else
             {
-                items[8].Text += "off";
+                items[9].Text += "off";
             }
-            items[9].Text = "Volume layer=" + e.CurrentVolume;
+            items[10].Text = "Volume layer=" + e.CurrentVolume;
         }
 
         public void ChangeVolumeLayer()

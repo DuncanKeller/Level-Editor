@@ -139,7 +139,7 @@ namespace LevelEditor
                 {
                     cl.Add(xpoints[i], ypoints[i]);
                 }
-                cl.Physical = (bool)collisionJson["physical"];
+                cl.Physical = (bool)collisionJson["physical"]; 
                 cVolumes.Add(cl);
             }
             dynamic = (bool)json["dynamic"];
@@ -148,7 +148,6 @@ namespace LevelEditor
             {
                 this.tags.Add((string)tags[index]);
             }
-
         }
 
         public void SaveBlueprint()
@@ -157,7 +156,6 @@ namespace LevelEditor
             //    Environment.SpecialFolder.LocalApplicationData) + name + ".json", FileMode.Create);
             FileStream fs = File.Open("blueprints\\" + name + ".json", FileMode.Create);
             StreamWriter sw = new StreamWriter(fs);
-
             JsonTextWriter jw = new JsonTextWriter(sw);
             jw.Formatting = Formatting.Indented;
 

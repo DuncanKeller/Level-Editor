@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace LevelEditor
 {
@@ -19,7 +20,8 @@ namespace LevelEditor
         List<Animation> anims = new List<Animation>();
         int move = 50;
         GraphicsDevice graphics;
-        Bitmap setimg;
+
+        int index;
 
         public AnimationForm()
         {
@@ -47,7 +49,7 @@ namespace LevelEditor
             {
                 foreach (PictureBox p in pics)
                 {
-                    p.Location = new System.Drawing.Point(p.Location.X - move, p.Location.X);
+                    p.Location = new System.Drawing.Point(p.Location.X - move, p.Location.Y);
                 }
             }
         }
@@ -58,20 +60,30 @@ namespace LevelEditor
             {
                 foreach (PictureBox p in pics)
                 {
-                    p.Location = new System.Drawing.Point(p.Location.X + move, p.Location.X);
+                    p.Location = new System.Drawing.Point(p.Location.X + move, p.Location.Y);
+
                 }
             }
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            current = anims[listBox1.SelectedIndex];
-            move = 0;
-            RefreshItems();
+            if (listBox1.SelectedIndex >= 0)
+            {
+                current = anims[listBox1.SelectedIndex];
+                
+                move = 0;
+                RefreshItems();
+            }
         }
 
         private void RefreshItems()
         {
+            foreach (PictureBox p in pics)
+            {
+                Controls.Remove(p);
+            }
+
             pics.Clear();
 
             for (int i = 0; i < current.frames.Count; i++)
@@ -84,21 +96,40 @@ namespace LevelEditor
                 texutre.SaveAsJpeg(mem, texutre.Width, texutre.Height);
                 Bitmap image = new Bitmap(mem);
                 p.Image = image;
-                setimg = image;
                 p.Click += new EventHandler(FrameClicked);
                 Controls.Add(p);
                 pics.Add(p);
             }
+
+            textBox1.Text = current.name;
         }
 
         private void FrameClicked(object sender, EventArgs e)
         {
-            pictureBox1.Image = (sender as PictureBox).Image = setimg;
+            //pictureBox1.Image = (sender as PictureBox).Image = setimg;
+            int i = 0;
+            foreach (PictureBox p in pics)
+            {
+                int mx = Cursor.Position.X;
+                int my = Cursor.Position.Y;
+                if (sender == p)
+                {
+                    Texture2D image = current.frames[i];
+                    frame.SetImage(image);
+                    break;
+                }
+                i++;
+            }
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
-
+            //if (current != null)
+            //{
+            //    Texture2D t = LoadImage();
+            //    current.frames.Add(t);
+            //    RefreshItems();
+            //}
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -123,8 +154,13 @@ namespace LevelEditor
                 }
             }
 
-            return tex;
             s.Close();
+            return tex;
+        }
+
+        public void SaveAnimation()
+        {
+
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -140,6 +176,30 @@ namespace LevelEditor
             current = a;
         }
 
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (current != null)
+            {
+                current.name = textBox1.Text;
+                listBox1.Items[listBox1.SelectedIndex] = textBox1.Text;
+            }
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            if (current != null)
+            {
+                current.speed = float.Parse(textBox2.Text);
+            }
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            if (current != null)
+            {
+                current.loopback = int.Parse(textBox3.Text);
+            }
+        }
     }
 
     public class Animation

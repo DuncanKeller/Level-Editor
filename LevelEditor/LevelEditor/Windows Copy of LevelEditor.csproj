@@ -78,6 +78,20 @@
     <Compile Include="Forms\AnimationForm.Designer.cs">
       <DependentUpon>AnimationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FrameDisplayComponent.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\FrameDisplayComponent.Designer.cs">
+      <DependentUpon>FrameDisplayComponent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\GraphicsDeviceControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\GraphicsDeviceControl.Designer.cs">
+      <DependentUpon>GraphicsDeviceControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\GraphicsDeviceService.cs" />
+    <Compile Include="Forms\ServiceContainer.cs" />
     <Compile Include="Forms\TagForm.cs">
       <SubType>Form</SubType>
     </Compile>
