@@ -44,16 +44,24 @@
             this.button5 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button6 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.button9 = new System.Windows.Forms.Button();
+            this.button10 = new System.Windows.Forms.Button();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // frame
             // 
-            //this.frame.Location = new System.Drawing.Point(374, 21);
-            this.frame.Location = new System.Drawing.Point(0, 0);
+            this.frame.Location = new System.Drawing.Point(374, 31);
             this.frame.Name = "frame";
             this.frame.Size = new System.Drawing.Size(373, 350);
             this.frame.TabIndex = 0;
             this.frame.Text = "frame";
+            this.frame.Click += new System.EventHandler(this.frame_Click);
             // 
             // listBox1
             // 
@@ -189,11 +197,93 @@
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(776, 31);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(86, 31);
+            this.button7.TabIndex = 16;
+            this.button7.Text = "Add Volume";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(776, 102);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(86, 31);
+            this.button8.TabIndex = 17;
+            this.button8.Text = "cycle volumes";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(776, 139);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.ReadOnly = true;
+            this.textBox4.Size = new System.Drawing.Size(28, 20);
+            this.textBox4.TabIndex = 18;
+            // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(776, 277);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(86, 31);
+            this.button9.TabIndex = 19;
+            this.button9.Text = "toggle visibility";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(776, 165);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(86, 31);
+            this.button10.TabIndex = 20;
+            this.button10.Text = "toggle phys";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(776, 202);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.ReadOnly = true;
+            this.textBox5.Size = new System.Drawing.Size(86, 20);
+            this.textBox5.TabIndex = 21;
+            // 
+            // textBox6
+            // 
+            this.textBox6.Location = new System.Drawing.Point(834, 139);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.ReadOnly = true;
+            this.textBox6.Size = new System.Drawing.Size(28, 20);
+            this.textBox6.TabIndex = 22;
+            this.textBox6.Text = "1";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(811, 142);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(12, 13);
+            this.label5.TabIndex = 23;
+            this.label5.Text = "/";
+            // 
             // AnimationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(885, 599);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.textBox6);
+            this.Controls.Add(this.textBox5);
+            this.Controls.Add(this.button10);
+            this.Controls.Add(this.button9);
+            this.Controls.Add(this.textBox4);
+            this.Controls.Add(this.button8);
+            this.Controls.Add(this.button7);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
@@ -234,5 +324,13 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button button6;
         private FrameDisplayComponent frame;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.Label label5;
     }
 }

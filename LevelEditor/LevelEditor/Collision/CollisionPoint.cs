@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace LevelEditor
 {
-    class CollisionPoint
+    public class CollisionPoint
     {
         float x;
         float y;

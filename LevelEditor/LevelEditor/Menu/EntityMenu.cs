@@ -70,7 +70,7 @@ namespace LevelEditor
             {
                 inUse = true;
                 AnimationForm anim = new AnimationForm();
-                anim.Init(MenuSystem.graphics);
+                anim.Init(MenuSystem.graphics, e);
                 anim.Show();
             }
         }

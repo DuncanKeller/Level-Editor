@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace LevelEditor
 {
-    class CollisionList
+    public class CollisionList
     {
         CollisionPoint head;
         bool physical = true;

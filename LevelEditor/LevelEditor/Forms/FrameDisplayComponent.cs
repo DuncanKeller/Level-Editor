@@ -4,6 +4,9 @@ using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using System.IO;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace LevelEditor
@@ -17,13 +20,13 @@ namespace LevelEditor
     /// </summary>
     partial class FrameDisplayComponent : GraphicsDeviceControl
     {
-        BasicEffect effect;
-        Stopwatch timer;
         Texture2D texture;
         ContentManager content;
         SpriteBatch sb;
-
-        Texture2D test;
+        
+        List<CollisionList> list;
+        bool trans = false;
+        int index = 0;
 
         /// <summary>
         /// Initializes the control.
@@ -35,15 +38,39 @@ namespace LevelEditor
 
             sb = new SpriteBatch(GraphicsDevice);
 
-            test = content.Load<Texture2D>("blank");
-
             // Hook the idle event to constantly redraw our animation.
             Application.Idle += delegate { Invalidate(); };
         }
 
         public void SetImage(Texture2D t)
         {
-            texture = t;
+            if (t != null)
+            {
+                texture = new Texture2D(GraphicsDevice, t.Width, t.Height);
+                int[] data = new int[t.Width * t.Height];
+                t.GetData<int>(data);
+                texture.SetData<int>(data);
+            }
+            else
+            {
+                texture = null;
+            }
+        }
+
+        public void SetList(List<CollisionList> l)
+        {
+            list = l;
+            index = 0;
+        }
+
+        public void SetIndex(int i)
+        {
+            index = i;
+        }
+
+        public void ToggelVis()
+        {
+            trans = !trans;
         }
 
         protected override void Dispose(bool disposing)
@@ -63,23 +90,37 @@ namespace LevelEditor
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // Set renderstates.
-            //GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-           
             sb.Begin();
 
             if (texture != null)
             {
-                //GraphicsDevice.Clear(Color.Green);
-                Rectangle r = new Rectangle(0, 0, 50, 50);
-                sb.Draw(texture, r, Color.White);
-            }
-            else
-            {
-                //GraphicsDevice.Clear(Color.Red);
+                Rectangle r = new Rectangle(0, 0, texture.Width, texture.Height);
+                if (trans)
+                {
+                    sb.Draw(texture, r, new Color(100, 100, 100, 100));
+                }
+                else
+                {
+                    sb.Draw(texture, r, Color.White);
+                }
             }
 
-          
+            if (list != null)
+            {
+                int count = 0;
+                foreach (CollisionList l in list)
+                {
+                    if (count == index)
+                    {
+                        l.Draw(sb, Color.Red);
+                    }
+                    else
+                    {
+                        l.Draw(sb, new Color(50,50,50,50));
+                    }
+                    count++;
+                }
+            }
 
             sb.End();
         }

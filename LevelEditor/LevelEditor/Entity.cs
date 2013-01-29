@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LevelEditor
 {
-    class Entity
+    public class Entity
     {
         public enum EditMode
         {
@@ -204,8 +204,9 @@ namespace LevelEditor
                 {
                     jw.WriteValue(p.Y - center.Y);
                 }
+                jw.WriteEnd();
             }
-            jw.WriteEnd();
+            
             jw.WriteEnd();
             jw.WriteEnd();
             jw.WritePropertyName("texture");
@@ -378,17 +379,20 @@ namespace LevelEditor
                 if (Input.KeyPressed(Keys.LeftControl))
                 { mode = EditMode.none; }
 
-                if (Input.LeftClick())
+                if (Input.Overlapping(new Rectangle(0, 0, Config.screenW, Config.screenH)))
                 {
-                    cVolumes[currVolume].Add(Input.X, Input.Y);
-                }
-                else if (Input.RightClick())
-                {
-                    cVolumes[currVolume].Delete(Input.X, Input.Y);
-                }
-                else if (Input.KeyPressed(Keys.Back))
-                {
-                    cVolumes[currVolume].RemoveHead();
+                    if (Input.LeftClick())
+                    {
+                        cVolumes[currVolume].Add(Input.X, Input.Y);
+                    }
+                    else if (Input.RightClick())
+                    {
+                        cVolumes[currVolume].Delete(Input.X, Input.Y);
+                    }
+                    else if (Input.KeyPressed(Keys.Back))
+                    {
+                        cVolumes[currVolume].RemoveHead();
+                    }
                 }
             }
         }

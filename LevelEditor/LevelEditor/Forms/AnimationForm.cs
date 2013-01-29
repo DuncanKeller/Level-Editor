@@ -15,22 +15,120 @@ namespace LevelEditor
 {
     public partial class AnimationForm : Form
     {
+        Entity entity;
         Animation current;
         List<PictureBox> pics = new List<PictureBox>();
         List<Animation> anims = new List<Animation>();
         int move = 50;
         GraphicsDevice graphics;
 
-        int index;
+        int currFrame = 0;
+        int colIndex = 0;
 
         public AnimationForm()
         {
             InitializeComponent();
         }
 
-        public void Init(GraphicsDevice g)
+        public void Init(GraphicsDevice g, Entity e)
         {
+            entity = e;
             graphics = g;
+        }
+
+        public void SaveAnim(string name)
+        {
+            if (!Directory.Exists("blueprints\\anim"))
+            { Directory.CreateDirectory("blueprints\\anim"); }
+
+            FileStream fs = File.Open("blueprints\\anim\\" + name + ".json", FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+            JsonTextWriter jw = new JsonTextWriter(sw);
+            jw.Formatting = Formatting.Indented;
+            
+            jw.WriteStartObject();
+            //anim
+            jw.WritePropertyName("animations");
+            jw.WriteStartArray();
+            foreach (Animation a in anims)
+            {
+                jw.WriteStartObject();
+
+                jw.WritePropertyName("name");
+                jw.WriteValue(a.name);
+                jw.WritePropertyName("speed");
+                jw.WriteValue(a.speed);
+                jw.WritePropertyName("loop");
+                jw.WriteValue(a.loopback);
+                jw.WritePropertyName("frames");
+                jw.WriteValue(a.frames.Count);
+
+                //collision
+                jw.WritePropertyName("collisionVolumes");
+                jw.WriteStartArray();
+                for (int i = 0; i < a.frames.Count; i++)
+                {
+                    if (a.collision[i].Count > 0)
+                    {
+                        jw.WriteStartObject();
+                        jw.WritePropertyName("frames");
+                        jw.WriteStartArray();
+                        foreach (CollisionList cl in a.collision[i])
+                        {
+                            jw.WriteStartObject();
+                            jw.WritePropertyName("physical");
+                            jw.WriteValue(cl.Physical);
+                            jw.WritePropertyName("xpoints");
+                            jw.WriteStartArray();
+                            foreach (CollisionPoint p in cl.Nodes)
+                            {
+                                jw.WriteValue(p.X - (a.frames[i].Width / 2));
+                            }
+                            jw.WriteEnd();
+                            jw.WritePropertyName("ypoints");
+                            jw.WriteStartArray();
+                            foreach (CollisionPoint p in cl.Nodes)
+                            {
+                                jw.WriteValue(p.Y - (a.frames[i].Height / 2));
+                            }
+                            jw.WriteEnd();
+                            jw.WriteEnd();
+                        }
+                        jw.WriteEnd();
+                        jw.WriteEnd();
+                    }
+                    else
+                    {
+                        jw.WriteWhitespace("");
+                    }
+                }
+                jw.WriteEnd();
+                // end anim
+                jw.WriteEnd();
+            }
+            jw.WriteEnd();
+
+            jw.WriteEnd();
+            jw.Close();
+
+            if (!Directory.Exists("images\\anim"))
+            { Directory.CreateDirectory("images\\anim"); }
+
+            if (!Directory.Exists("images\\anim\\" + name))
+            { Directory.CreateDirectory("images\\anim\\" + name); }
+            foreach (Animation a in anims)
+            {
+                if (!Directory.Exists("images\\anim\\" + name + "\\" + a.name))
+                { Directory.CreateDirectory("images\\anim\\" + name + "\\" + a.name); }
+                int frameNum = 0;
+                foreach (Texture2D t in a.frames)
+                {
+                    Stream s = File.OpenWrite("images\\anim\\" + name + "\\" + a.name + "\\" + frameNum + ".png");
+                    t.SaveAsPng(s, t.Width, t.Height);
+                    s.Close();
+                    frameNum++;
+                }
+            }
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -39,8 +137,11 @@ namespace LevelEditor
             {
                 Texture2D t = LoadImage();
                 current.frames.Add(t);
+                current.collision.Add(new List<CollisionList>());
+                current.collision[current.frames.Count - 1].Add(new CollisionList());
                 RefreshItems();
             }
+        
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -71,9 +172,19 @@ namespace LevelEditor
             if (listBox1.SelectedIndex >= 0)
             {
                 current = anims[listBox1.SelectedIndex];
-                
+                frame.SetList(null);
                 move = 0;
                 RefreshItems();
+                RefreshCol();
+                currFrame = 0;
+                if (current.frames.Count == 0)
+                {
+                    frame.SetImage(null);
+                }
+                else
+                {
+                    frame.SetImage(current.frames[0]);
+                }
             }
         }
 
@@ -116,10 +227,43 @@ namespace LevelEditor
                 {
                     Texture2D image = current.frames[i];
                     frame.SetImage(image);
+                    currFrame = i;
+                    frame.SetList(current.collision[i]);
+                    RefreshCol();
                     break;
                 }
                 i++;
             }
+        }
+
+        private void RefreshCol()
+        {
+            if (current.frames.Count > 0)
+            {
+                if (colIndex >= current.collision[currFrame].Count)
+                { colIndex = current.collision[currFrame].Count - 1; }
+                if (colIndex < 0)
+                { colIndex = 0; }
+                textBox5.Text = current.collision[currFrame][colIndex].Physical.ToString();
+                textBox4.Text = (colIndex + 1).ToString();
+                textBox6.Text = current.collision[currFrame].Count.ToString();
+                frame.SetIndex(colIndex);
+                //frame.SetImage(current.frames[0]);
+                //currFrame = 0;
+            }
+            else
+            {
+                textBox5.Text = "";
+                textBox4.Text = "";
+                textBox6.Text = "";
+                frame.SetIndex(0);
+                frame.SetImage(null);
+                //currFrame = 0;
+            }
+
+            textBox1.Text = current.name;
+            textBox2.Text = current.speed.ToString();
+            textBox3.Text = current.loopback.ToString();
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -134,7 +278,7 @@ namespace LevelEditor
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            
         }
 
         private Texture2D LoadImage()
@@ -158,19 +302,16 @@ namespace LevelEditor
             return tex;
         }
 
-        public void SaveAnimation()
-        {
-
-        }
-
         private void button6_Click(object sender, EventArgs e)
         {
+            SaveAnim(entity.Name);
             Hide();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             Animation a = new Animation();
+            a.collision.Add( new List<CollisionList>());
             anims.Add(a);
             listBox1.Items.Add("default");
             current = a;
@@ -200,6 +341,46 @@ namespace LevelEditor
                 current.loopback = int.Parse(textBox3.Text);
             }
         }
+
+        private void frame_Click(object sender, EventArgs e)
+        {
+            if (current != null)
+            {
+                System.Drawing.Point p = PointToClient(Cursor.Position);
+                current.collision[currFrame][colIndex].Add(
+                    p.X - frame.Location.X,
+                    p.Y - frame.Location.Y);
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            colIndex++;
+            if (colIndex >= current.collision[currFrame].Count)
+            { colIndex = 0; }
+            textBox4.Text = (colIndex + 1).ToString();
+            frame.SetIndex(colIndex);
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            frame.ToggelVis();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            current.collision[currFrame][colIndex].Physical = !current.collision[currFrame][colIndex].Physical;
+            textBox5.Text = current.collision[currFrame][colIndex].Physical.ToString();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (current.collision[currFrame].Count < 4)
+            {
+                current.collision[currFrame].Add(new CollisionList());
+            }
+            textBox6.Text = current.collision[currFrame].Count.ToString();
+        }
     }
 
     public class Animation
@@ -208,6 +389,7 @@ namespace LevelEditor
         public float speed;
         public int loopback;
         public List<Texture2D> frames = new List<Texture2D>();
+        public List<List<CollisionList>> collision = new List<List<CollisionList>>();
 
         public Animation()
         {

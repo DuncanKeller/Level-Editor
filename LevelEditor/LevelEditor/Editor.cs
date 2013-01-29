@@ -153,7 +153,6 @@ namespace LevelEditor
                 foreach (Entity e in layer)
                 {
                     e.SaveEntity(ref jw);
-                    //jw.WriteValue(e.SaveEntity());
                 }
             }
             jw.WriteEnd();
