@@ -20,6 +20,18 @@ namespace LevelEditor
             get { return current; }
         }
 
+        public static bool InUse
+        {
+            get
+            {
+                if (current != null)
+                {
+                    return current.InUse;
+                }
+                return false;
+            }
+        }
+
         public static void Init(GraphicsDevice g)
         {
             graphics = g;

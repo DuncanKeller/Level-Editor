@@ -15,8 +15,7 @@ namespace LevelEditor
     class EntityMenu : Menu
     {
         Entity e;
-        bool inUse = false;
-
+        
         public EntityMenu(Entity e)
             : base(0, 0, 200, Config.screenH)
         {
@@ -70,7 +69,7 @@ namespace LevelEditor
             {
                 inUse = true;
                 AnimationForm anim = new AnimationForm();
-                anim.Init(MenuSystem.graphics, e);
+                anim.Init(MenuSystem.graphics, e, delegate() { inUse = false; });
                 anim.Show();
             }
         }

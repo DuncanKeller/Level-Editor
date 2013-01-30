@@ -13,8 +13,15 @@ namespace LevelEditor
         int y;
         protected int w;
         protected int h;
+        protected bool inUse = false;
+
 
         protected List<MenuItem> items = new List<MenuItem>();
+
+        public bool InUse
+        {
+            get { return inUse; }
+        }
 
         public Vector2 Position
         {

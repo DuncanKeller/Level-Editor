@@ -281,11 +281,14 @@ namespace LevelEditor
             if (MenuSystem.Current == null ||
                 !Input.Overlapping(MenuSystem.Current.Rect))
             {
-                OpenMenu();
-                Drag();
-                Rotate();
+                if (!MenuSystem.InUse)
+                {
+                    OpenMenu();
+                    Drag();
+                    Rotate();
 
-                Collisions();
+                    Collisions();
+                }
             }
         }
 

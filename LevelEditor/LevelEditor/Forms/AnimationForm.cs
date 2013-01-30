@@ -25,15 +25,18 @@ namespace LevelEditor
         int currFrame = 0;
         int colIndex = 0;
 
+        MenuAction callback;
+
         public AnimationForm()
         {
             InitializeComponent();
         }
 
-        public void Init(GraphicsDevice g, Entity e)
+        public void Init(GraphicsDevice g, Entity e, MenuAction c)
         {
             entity = e;
             graphics = g;
+            callback = c;
         }
 
         public void SaveAnim(string name)
@@ -305,6 +308,7 @@ namespace LevelEditor
         private void button6_Click(object sender, EventArgs e)
         {
             SaveAnim(entity.Name);
+            callback();
             Hide();
         }
 

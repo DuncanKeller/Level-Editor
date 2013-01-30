@@ -115,8 +115,10 @@ namespace LevelEditor
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            
+            Editor.Draw(spriteBatch, graphics.GraphicsDevice);
+
             spriteBatch.Begin();
-            Editor.Draw(spriteBatch);
             MenuSystem.Draw(spriteBatch);
             spriteBatch.Draw(TextureManager.TexMap["blank"], new Rectangle(Input.X - 1, Input.Y - 1, 3, 3), Color.Black);
             spriteBatch.End();

@@ -99,6 +99,33 @@ namespace LevelEditor
             {
                 Save();
             }
+
+            MoveCam();
+        }
+
+        private static void MoveCam()
+        {
+            int speed = 10;
+            if (Input.KeyHeld(Keys.LeftShift))
+            { speed = 100; }
+            else if (Input.KeyHeld(Keys.LeftControl))
+            { speed = 1; }
+            if (Input.KeyHeld(Keys.A))
+            {
+                cam._pos.X -= speed;
+            }
+            if (Input.KeyHeld(Keys.D))
+            {
+                cam._pos.X += speed;
+            }
+            if (Input.KeyHeld(Keys.W))
+            {
+                cam._pos.Y -= speed;
+            }
+            if (Input.KeyHeld(Keys.S))
+            {
+                cam._pos.Y += speed;
+            }
         }
 
         public static void ChangeLayer(Entity e, int index)
@@ -160,8 +187,10 @@ namespace LevelEditor
             jw.Close();
         }
 
-        public static void Draw(SpriteBatch sb)
+        public static void Draw(SpriteBatch sb, GraphicsDevice g)
         {
+            sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp,
+                DepthStencilState.Default, RasterizerState.CullNone, null, cam.get_transformation(g));
             foreach (List<Entity> layer in layers)
             {
                 foreach (Entity e in layer)
@@ -169,6 +198,7 @@ namespace LevelEditor
                     e.Draw(sb);
                 }
             }
+            sb.End();
         }
     }
 }
