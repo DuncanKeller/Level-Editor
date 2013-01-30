@@ -149,6 +149,20 @@ namespace LevelEditor
             Rotate(e.Rotation, e.Rect.Center.X, e.Rect.Center.Y);
         }
 
+        public void Clone(CollisionList list)
+        {
+            if (list.head != null)
+            {
+                CollisionPoint c = list.head;
+
+                while (c != null)
+                {
+                    Add(c.X, c.Y);
+                    c = c.Next;
+                }
+            }
+        }
+
         public void Draw(SpriteBatch sb, Color c)
         {
             if (head != null)

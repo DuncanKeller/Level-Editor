@@ -5,9 +5,7 @@ using System.Text;
 
 namespace LevelEditor
 {
-    static class Config
+    class Layer
     {
-        public static int screenW = 1920;
-        public static int screenH = 1080;
     }
 }

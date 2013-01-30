@@ -52,6 +52,9 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.button11 = new System.Windows.Forms.Button();
+            this.button12 = new System.Windows.Forms.Button();
+            this.button13 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // frame
@@ -164,7 +167,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(787, 464);
+            this.button4.Location = new System.Drawing.Point(776, 464);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(39, 123);
             this.button4.TabIndex = 13;
@@ -174,7 +177,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(834, 464);
+            this.button5.Location = new System.Drawing.Point(823, 464);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(39, 123);
             this.button5.TabIndex = 14;
@@ -189,7 +192,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(787, 412);
+            this.button6.Location = new System.Drawing.Point(776, 412);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(86, 31);
             this.button6.TabIndex = 15;
@@ -227,7 +230,7 @@
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(776, 277);
+            this.button9.Location = new System.Drawing.Point(776, 349);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(86, 31);
             this.button9.TabIndex = 19;
@@ -237,7 +240,7 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(776, 165);
+            this.button10.Location = new System.Drawing.Point(776, 286);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(86, 31);
             this.button10.TabIndex = 20;
@@ -247,7 +250,7 @@
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(776, 202);
+            this.textBox5.Location = new System.Drawing.Point(776, 323);
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
             this.textBox5.Size = new System.Drawing.Size(86, 20);
@@ -271,11 +274,45 @@
             this.label5.TabIndex = 23;
             this.label5.Text = "/";
             // 
+            // button11
+            // 
+            this.button11.Location = new System.Drawing.Point(776, 165);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(86, 31);
+            this.button11.TabIndex = 24;
+            this.button11.Text = "copy volume";
+            this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
+            // 
+            // button12
+            // 
+            this.button12.Location = new System.Drawing.Point(776, 202);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(86, 31);
+            this.button12.TabIndex = 25;
+            this.button12.Text = "deep copy";
+            this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
+            // 
+            // button13
+            // 
+            this.button13.Location = new System.Drawing.Point(776, 239);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(86, 31);
+            this.button13.TabIndex = 26;
+            this.button13.Text = "delete volume";
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
+            // 
             // AnimationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(885, 599);
+            this.Controls.Add(this.button13);
+            this.Controls.Add(this.button12);
+            this.Controls.Add(this.button11);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.textBox6);
             this.Controls.Add(this.textBox5);
@@ -301,6 +338,7 @@
             this.Controls.Add(this.frame);
             this.Name = "AnimationForm";
             this.Text = "Animation";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AnimationForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -332,5 +370,8 @@
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.Button button13;
     }
 }

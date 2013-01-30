@@ -35,8 +35,8 @@ namespace LevelEditor
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 600;
+            graphics.PreferredBackBufferWidth = Config.screenW;
+            graphics.PreferredBackBufferHeight = Config.screenH;
             graphics.ApplyChanges();
 
             CreateFolders();

@@ -39,5 +39,18 @@ namespace LevelEditor
             sw.Close();
             this.Close();
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            listBox1.Items.Remove(listBox1.SelectedItem);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
+            string path = openFileDialog1.FileName;
+            string name = Path.GetFileName(path);
+            listBox1.Items.Add(name);
+        }
     }
 }
