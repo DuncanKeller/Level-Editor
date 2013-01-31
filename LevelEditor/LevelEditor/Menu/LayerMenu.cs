@@ -27,7 +27,7 @@ namespace LevelEditor
             AddItem("Delete Layer", null, new Vector2(0, GetMenuItemYPos(1)), Color.Black, DeleteLayer);
 
             int count = 0;
-            foreach (List<Entity> layer in Editor.Layers)
+            foreach (Layer layer in Editor.Layers)
             {
                 AddItem((count + 1).ToString(), null, new Vector2(0, GetMenuItemYPos(count + 2)), Color.White, ChangeLayer, count);
                 count++;
@@ -41,7 +41,7 @@ namespace LevelEditor
 
         public void AddLayer()
         {
-            Editor.Layers.Add(new List<Entity>());
+            Editor.Layers.Add(new Layer());
             reInit = true;
         }
 

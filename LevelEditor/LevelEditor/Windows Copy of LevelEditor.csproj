@@ -117,6 +117,7 @@
       <DependentUpon>TextureBank.cs</DependentUpon>
     </Compile>
     <Compile Include="Input.cs" />
+    <Compile Include="Layer.cs" />
     <Compile Include="LineBatch.cs" />
     <Compile Include="Menu\EntityMenu.cs" />
     <Compile Include="Menu\BlueprintMenu.cs" />

@@ -14,15 +14,15 @@ namespace LevelEditor
     {
         static Camera cam;
         static int currentLayer;
-        static List<List<Entity>> layers = new List<List<Entity>>();
         static Dictionary<string, string> blueprints = new Dictionary<string, string>();
+        static List<Layer> layers = new List<Layer>();
         
         public static Dictionary<string, string> Blueprints
         {
             get { return blueprints; }
         }
 
-        public static List<List<Entity>> Layers
+        public static List<Layer> Layers
         {
             get { return layers; }
             set { layers = value; }
@@ -44,7 +44,7 @@ namespace LevelEditor
             cam = new Camera();
             cam._pos.X += Config.screenW / 2;
             cam._pos.Y += Config.screenH / 2;
-            layers.Add(new List<Entity>());
+            layers.Add(new Layer());
             currentLayer = 0;
 
             layers[0].Add(new Entity("finger", 100, 100));
@@ -52,8 +52,7 @@ namespace LevelEditor
 
         public static void Update()
         {
-            List<Entity> toRemove = new List<Entity>();
-            foreach (List<Entity> layer in layers)
+            foreach (Layer layer in layers)
             {
                 if (layers[currentLayer] == layer)
                 {
@@ -68,8 +67,6 @@ namespace LevelEditor
                     }
                     layer.Reverse();
 
-                    foreach (Entity e in toRemove)
-                    { layer.Remove(e); }
                 }
             }
 
@@ -131,7 +128,7 @@ namespace LevelEditor
         public static void ChangeLayer(Entity e, int index)
         {
             int i = 0;
-            foreach (List<Entity> layer in layers)
+            foreach (Layer layer in layers)
             {
                 if (layer.Contains(e))
                 {
