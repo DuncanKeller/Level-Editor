@@ -54,20 +54,7 @@ namespace LevelEditor
         {
             foreach (Layer layer in layers)
             {
-                if (layers[currentLayer] == layer)
-                {
-                    layer.Reverse();
-                    foreach (Entity e in layer)
-                    {
-                        e.Update();
-                        if (Input.Overlapping(e.Rect) &&
-                            Input.RightClick() && 
-                            e.Mode == Entity.EditMode.none)
-                        { toRemove.Add(e); MenuSystem.Close(); break; }
-                    }
-                    layer.Reverse();
-
-                }
+                layer.Update(1);
             }
 
             if (Input.KeyPressed(Keys.Tab))
@@ -130,7 +117,7 @@ namespace LevelEditor
             int i = 0;
             foreach (Layer layer in layers)
             {
-                if (layer.Contains(e))
+                if (layer.Entities.Contains(e))
                 {
                     if (i + index >= 0 &&
                         i + index < layers.Count)
@@ -172,9 +159,9 @@ namespace LevelEditor
             jw.WriteStartObject();
             jw.WritePropertyName("entities");
             jw.WriteStartArray();
-            foreach (List<Entity> layer in layers)
+            foreach (Layer layer in layers)
             {
-                foreach (Entity e in layer)
+                foreach (Entity e in layer.Entities)
                 {
                     e.SaveEntity(ref jw);
                 }
@@ -188,12 +175,9 @@ namespace LevelEditor
         {
             sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp,
                 DepthStencilState.Default, RasterizerState.CullNone, null, cam.get_transformation(g));
-            foreach (List<Entity> layer in layers)
+            foreach (Layer layer in layers)
             {
-                foreach (Entity e in layer)
-                {
-                    e.Draw(sb);
-                }
+                layer.Draw(sb);
             }
             sb.End();
         }

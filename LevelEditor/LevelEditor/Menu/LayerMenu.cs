@@ -25,11 +25,12 @@ namespace LevelEditor
 
             AddItem("Add Layer", null, new Vector2(0, GetMenuItemYPos(0)), Color.Black, AddLayer);
             AddItem("Delete Layer", null, new Vector2(0, GetMenuItemYPos(1)), Color.Black, DeleteLayer);
+            AddItem("Set Visbility", null, new Vector2(0, GetMenuItemYPos(2)), Color.Black, Visibility);
 
             int count = 0;
             foreach (Layer layer in Editor.Layers)
             {
-                AddItem((count + 1).ToString(), null, new Vector2(0, GetMenuItemYPos(count + 2)), Color.White, ChangeLayer, count);
+                AddItem((count + 1).ToString(), null, new Vector2(0, GetMenuItemYPos(count + 3)), Color.White, ChangeLayer, count);
                 count++;
             }
         }
@@ -37,6 +38,11 @@ namespace LevelEditor
         public void ChangeLayer(int i)
         {
             Editor.CurrentLayer = i;
+        }
+
+        public void Visibility()
+        {
+            Editor.Layers[Editor.CurrentLayer].Visibility = !Editor.Layers[Editor.CurrentLayer].Visibility;
         }
 
         public void AddLayer()

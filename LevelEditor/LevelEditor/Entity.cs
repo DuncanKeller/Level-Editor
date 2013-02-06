@@ -165,15 +165,7 @@ namespace LevelEditor
             jw.WritePropertyName("rotation");
             jw.WriteValue(rotation);
             jw.WritePropertyName("x");
-            Vector2 center;
-            if (cVolumes[0] != null)
-            {
-                center = cVolumes[0].GetCenter();
-            }
-            else
-            {
-                center = new Vector2(rect.Center.X, rect.Center.Y);
-            }
+            Vector2 center = new Vector2(rect.Center.X, rect.Center.Y);
             jw.WriteValue(center.X);
             jw.WritePropertyName("y");
             jw.WriteValue(center.Y);
@@ -242,15 +234,7 @@ namespace LevelEditor
             jw.WritePropertyName("rotation");
             jw.WriteValue(rotation);
             jw.WritePropertyName("x");
-            Vector2 center;
-            if (cVolumes[0] != null)
-            {
-                center = cVolumes[0].GetCenter();
-            }
-            else
-            {
-                center = new Vector2(rect.Center.X, rect.Center.Y);
-            }
+            Vector2 center = new Vector2(rect.Center.X, rect.Center.Y);
             jw.WriteValue(center.X);
             jw.WritePropertyName("y");
             jw.WriteValue(center.Y);

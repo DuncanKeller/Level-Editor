@@ -14,6 +14,17 @@ namespace LevelEditor
         static List<Entity> toAdd = new List<Entity>();
         bool draw = true;
 
+        public bool Visibility
+        {
+            get { return draw; }
+            set { draw = value; }
+        }
+
+        public List<Entity> Entities
+        {
+            get { return entities; }
+        }
+
         public void Add(Entity e)
         {
             toAdd.Add(e);
@@ -37,10 +48,16 @@ namespace LevelEditor
 
             if (draw)
             {
+                entities.Reverse();
                 foreach (Entity e in entities)
                 {
                     e.Update();
+                    if (Input.Overlapping(e.Rect) &&
+                        Input.RightClick() &&
+                        e.Mode == Entity.EditMode.none)
+                    { toRemove.Add(e); MenuSystem.Close(); break; }
                 }
+                entities.Reverse();
             }
         }
 
